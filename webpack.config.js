@@ -10,14 +10,14 @@ var config = {
     filename: "bundle.js",
     publicPath: "/app/"
   },
-  modules: {
+  module: {
     loaders: [
       {
         test: /\.js?/,
         include: SRC_DIR,
         loader: "babel-loader",
         query: {
-          presets: []
+          presets: ["react", "stage-2", "es2015"]
         }
       }
     ]
