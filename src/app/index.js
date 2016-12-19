@@ -1,77 +1,87 @@
-import React from "react";
-import { render } from "react-dom";
-import { Input }  from "./components/Input";
-import { Todo }   from "./components/Todo";
-import { Todos }  from "./components/Todos";
+import React from "react"
+import reactRedux from "react-redux"
+import { render } from "react-dom"
+import { Input }  from "./components/Input"
+import { Todo }   from "./components/Todo"
+import { Todos }  from "./components/Todos"
+
+import { connect } from "react-redux"
+import store from "./store"
+import { Provider } from 'react-redux' 
+
+let todoId = 0;
+const getVisibleTodos = (todos, filter) => {
+  console.log(filter)
+    console.log(todos)
+  switch(filter) {
+    case 'ALL': 
+      return todos
+    case 'COMPLETE': 
+      return(todos.filter(t => t.completed))
+    case 'ACTIVE':
+      return todos.filter(t => !t.completed)
+  }
+}
+
+const FilterLink = ({filter, currentFilter, children}) => {
+    if (currentFilter === filter) {
+      return <span>{children}</span>
+    }
+    
+    return(
+    <a href="#"
+      onClick={ e=> {
+        e.preventDefault();
+        store.dispatch({
+          type: 'SET_VISIBILITY_FILTER', 
+          filter: filter })
+        }
+      }> 
+      {children} 
+    </a>
+  )
+}
 
 class App extends React.Component {
   constructor() {
-    super();
-    this.state = {
-      inputField: '',
-      allTodos: []
-    }
-  }
-
-  toggle(toggleIndex) {
-    this.setState({allTodos: this.state.allTodos.map((todo,i)=>{ 
-      if (toggleIndex === i) {
-        todo.completed = !todo.completed;
-      }
-      return todo
-    })
-    })
-  }
-
-  addTodo(name) {
-    if (name.length > 0) {
-      const updated = [ 
-                        {name: name, 
-                         toggle: this.toggle.bind(this), 
-                         completed: false
-                        }, ...this.state.allTodos
-                      ]
-      this.setState({allTodos: updated})
-      this.clearInput();
-    }
-  }
-
-  clearTodos() {
-    this.setState({allTodos: [], inputField: ''});
+    super()
+    this.state = {inputField: ''}
   }
 
   handleChange(event) {
     this.setState({inputField: event.target.value});
   }
 
-  clearInput() {
-    this.setState({inputField: ''});
-  }
-
-  checkLength(input) {
-    return(input.target.value.length > 0)
-  }
-
-
-  handleKeyPress(e) {
-    if (e.key === 'Enter') {
-      this.addTodo(this.state.inputField);   
-    }
-  }
   render() {
+    console.log(store.getState().visibilityFilter)
+    const visibleTodos = getVisibleTodos(store.getState().todos,
+                                         store.getState().visibilityFilter)
     return (
       <div className={"container"} style={{marginTop: "40px"}}>
         <div className={"row"}>
           <div className={"col-sm-8 col-sm-offset-2"}>
             <h1 style={{marginBottom: "30px"}}>Todo List</h1>
             <Input style= {{marginRight: "20px"}} 
+                   store= {store}
                    value= {this.state.inputField}
-                   enter= {this.handleKeyPress.bind(this)}
+                   click= {()=> {
+                   store.dispatch({ type: 'ADD_TODO',
+                       text: this.state.inputField,
+                       id: todoId++  
+                     })
+                }}
                    change={(event) => {this.handleChange(event)}}
-                   clickAdd= {this.addTodo.bind(this, this.state.inputField)}
-                   clickClear= {this.clearTodos.bind(this)}
             />
-            <Todos all={this.state.allTodos}/>
+            <Todos store={store} all={visibleTodos}/>
+            <p>
+              show:
+              {' '}
+              <FilterLink filter='ALL' currentFilter={store.getState().visibilityFilter}> All </FilterLink>
+              {' '}
+              <FilterLink currentFilter={store.getState().visibilityFilter} filter='COMPLETE'> Complete </FilterLink>
+              {' '}
+              <FilterLink currentFilter={store.getState().visibilityFilter} filter='ACTIVE'> Active </FilterLink>
+           </p>
           </div>
         </div>
       </div>
@@ -79,6 +89,13 @@ class App extends React.Component {
   }
 }
 
-render(<App/>, window.document.getElementById("app"));
 
+const renderIt = () => {
+  render(<App />,
+         window.document.getElementById("app")
+        )
+}
+
+store.subscribe(renderIt)
+renderIt()
 
