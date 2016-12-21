@@ -1,5 +1,9 @@
 import React from 'react';
-let todoId = 0;
+import { addTodo } from '../actions'
+
+
+// TODO refactor this component
+//
 
 class AddTodo extends React.Component {
   componentDidMount() {
@@ -33,12 +37,7 @@ class AddTodo extends React.Component {
           style={{marginLeft: "10px"}} 
           className={"btn btn-sm btn-primary"} 
           onClick={  
-            () => {
-              store.dispatch(
-                { type: 'ADD_TODO',
-                text: this.state.inputField,
-                id: todoId++})
-            }
+            () => store.dispatch(addTodo(this.state.inputField))
           }
         >
           Add Task 

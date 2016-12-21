@@ -1,41 +1,33 @@
 import React from 'react'
+import { connect } from  'react-redux'
+import { setVisibilityFilter } from '../actions'
 
-const Link = ({children, filter, active, onClick}) => {
+const Link = ({children,  active, onClick}) => {
   if (active) {
-    return <span>{children}</span>
-  }
-    
-  return(
-    <a href="#"
-      onClick={ ()=>onClick(filter)}> 
-      {children} 
-    </a>
-  )
-}
-
-export class FilterLink extends React.Component {
-  render() {
-    const props = this.props;
-    const { store } = this.context;
-
+    return <span> {children} </span>
+  } else {
     return(
-      <Link 
-        filter={props.filter}
-        active={props.filter === store.getState().visibilityFilter}
-        onClick={() => store.dispatch({
-                  type: 'SET_VISIBILITY_FILTER', 
-                  filter: props.filter
-                })}
-      >
-        {props.children}
-      </Link>
+      <a href="#"
+        onClick={ onClick}> 
+        {children} 
+      </a>
     )
   }
 }
 
-FilterLink.contextTypes ={
-  store: React.PropTypes.object
+const mapStateToProps = (state, props) => {
+  return {
+    active: props.filter === state.visibilityFilter
+  }
 }
 
+const mapDispatchToProps = (dispatch, props) => {
+  return {
+    onClick: 
+      (filter) => dispatch(setVisibilityFilter(props.filter))
+  }
+}
 
+const FilterLink = connect(mapStateToProps, mapDispatchToProps)(Link)
+export {FilterLink}
 

@@ -5,7 +5,7 @@ import { connect } from "react-redux"
 import store from "./store"
 import { Provider } from 'react-redux' 
 
-import { Input }  from "./components/Input"
+import { AddTodo }  from "./components/AddTodo"
 import { VisibleTodos }  from "./components/Todos"
 import { Footer } from "./components/Footer"
 
@@ -18,7 +18,7 @@ class App extends React.Component {
             <h1 style={{marginBottom: "30px"}}>
               Get Shit Done
             </h1>
-            <Input />
+            <AddTodo />
             <VisibleTodos />
             <Footer /> 
           </div>
@@ -33,6 +33,6 @@ const provider =
     <App />
   </Provider>
 
-render(provider ,document.getElementById("app"))
+render(provider, document.getElementById("app"))
 
 

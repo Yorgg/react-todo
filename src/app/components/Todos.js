@@ -1,18 +1,20 @@
 import React from 'react';
 import { Todo } from './Todo'
+import { connect } from  'react-redux'
+import { toggleTodo } from '../actions'
 
 const TodoList = ({todos, onTodoClick}) => { 
   return(
     <ul style={{marginTop: "20px"}}>
-    {todos.map((todo, i) => 
-      <Todo 
-        clickHandler={ () => onTodoClick(todo.id) } 
-        completed={todo.completed} 
-        text={todo.text}
-        key={todo.id}
-        id={todo.id}
-      />
-    )}
+      {todos.map((todo, i) => 
+        <Todo 
+          clickHandler={ () => onTodoClick(todo.id) } 
+          completed={todo.completed} 
+          text={todo.text}
+          key={todo.id}
+          id={todo.id}
+        />
+      )}
     </ul>
   )
 }
@@ -28,37 +30,21 @@ const getVisibleTodos = (todos, currentFilter) => {
   }
 }
 
-class VisibleTodos extends React.Component {
-  componentDidMount() {
-    const { store } = this.context
-    this.unsubscribe = store.subscribe(()=> this.forceUpdate());
-  }
-
-  componentWillUnmount() {
-    this.unsubscribe();
-  }
-  
-  render() {
-    const {store} = this.context;
-    const state = store.getState();
-    const visibleTodos = getVisibleTodos(state.todos, state.visibilityFilter)
-    return( 
-      <TodoList
-        todos={visibleTodos} 
-        onTodoClick = {
-          (todoId) => {
-            store.dispatch({type: 'TOGGLE_TODO', id: todoId})
-          }
-        } 
-      />
-    )
+const mapStateToProps = (state) => {
+  return {
+    todos: getVisibleTodos(state.todos, state.visibilityFilter)
   }
 }
 
-VisibleTodos.contextTypes ={
-  store: React.PropTypes.object
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onTodoClick: 
+      (todoId) => {
+        dispatch(toggleTodo(todoId))
+      } 
+  }
 }
 
-
+const VisibleTodos = connect(mapStateToProps, mapDispatchToProps)(TodoList);
 export {VisibleTodos}
 
