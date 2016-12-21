@@ -1,7 +1,15 @@
 import React from 'react';
 let todoId = 0;
 
-export class Input extends React.Component {
+class Input extends React.Component {
+  componentDidMount() {
+    const { store } = this.context
+    this.unsubscribe = store.subscribe(()=> this.forceUpdate());
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe();
+  }
   constructor() {
     super()
     this.state = {inputField: ''}
@@ -12,7 +20,7 @@ export class Input extends React.Component {
   } 
 
   render() {
-    const store = this.props.store
+    const {store} = this.context
     return(
       <div>
         <input 
@@ -39,3 +47,9 @@ export class Input extends React.Component {
     )
   }
 }
+
+Input.contextTypes ={
+  store: React.PropTypes.object
+}
+
+export { Input }

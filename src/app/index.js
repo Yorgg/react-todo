@@ -18,9 +18,9 @@ class App extends React.Component {
             <h1 style={{marginBottom: "30px"}}>
               Get Shit Done
             </h1>
-            <Input store={store} />
-            <VisibleTodos store={store} />
-            <Footer store={store}/> 
+            <Input />
+            <VisibleTodos />
+            <Footer /> 
           </div>
         </div>
       </div>
@@ -28,10 +28,11 @@ class App extends React.Component {
   }
 }
 
-const renderIt = () => {
-  render(<App />, window.document.getElementById("app"))
-}
+const provider =
+  <Provider store={store}>
+    <App />
+  </Provider>
 
-store.subscribe(renderIt)
-renderIt()
+render(provider ,document.getElementById("app"))
+
 
