@@ -1,7 +1,6 @@
 import React from 'react';
 import { addTodo } from '../actions'
 
-
 // TODO refactor this component
 //
 
@@ -51,4 +50,4 @@ AddTodo.contextTypes ={
   store: React.PropTypes.object
 }
 
-export { AddTodo }
+export default AddTodo
